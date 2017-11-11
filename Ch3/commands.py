@@ -38,6 +38,7 @@ plt.ylabel('petal width')
 plt.legend(loc='upper left')
 plt.show()
 
+'''
 # Sigmoid
 
 
@@ -56,6 +57,7 @@ plt.ylim(-0.1, 1.1)
 plt.xlabel('z')
 plt.ylabel('$\phi (z)$')
 plt.show()
+'''
 
 # Logistic Regression
 from sklearn.linear_model import LogisticRegression
@@ -68,6 +70,7 @@ plt.ylabel('petal width')
 plt.legend(loc='upper left')
 plt.show()
 
+'''
 # Logistic Regression with Regularization
 weights, params = [], []
 for c in np.arange(-5, 5, dtype=float):
@@ -83,6 +86,7 @@ plt.xlabel('C')
 plt.legend(loc='upper left')
 plt.xscale('log')
 plt.show()
+'''
 
 # Support Vector Machines
 from sklearn.svm import SVC
@@ -101,6 +105,8 @@ np.random.seed(0)
 X_xor = np.random.randn(200, 2)
 y_xor = np.logical_xor(X_xor[:, 0] > 0, X_xor[:, 1] > 0)
 y_xor = np.where(y_xor, 1, -1)
+
+'''
 plt.scatter(X_xor[y_xor == 1, 0], X_xor[y_xor == 1, 1],
             c='b', marker='x', label='1')
 plt.scatter(X_xor[y_xor == -1, 0], X_xor[y_xor == -1, 1],
@@ -108,13 +114,16 @@ plt.scatter(X_xor[y_xor == -1, 0], X_xor[y_xor == -1, 1],
 plt.ylim(-3.0)
 plt.legend()
 plt.show()
+'''
 
+'''
 # SVM Kernel for XOR
 svm = SVC(kernel='rbf', random_state=0, gamma=0.10, C=10.0)
 svm.fit(X_xor, y_xor)
 plot_decision_regions_two(X_xor, y_xor, classifier=svm)
 plt.legend(loc='upper left')
 plt.show()
+'''
 
 # SVM Kernel for Iris
 svm = SVC(kernel='rbf', random_state=0, gamma=0.2, C=1.0)
@@ -131,6 +140,39 @@ svm = SVC(kernel='rbf', random_state=0, gamma=100.0, C=1.0)
 svm.fit(X_train_std, y_train)
 plot_decision_regions_two(X_combined_std, y_combined,
                           classifier=svm, test_idx=range(105, 150))
+plt.xlabel('petal length')
+plt.ylabel('petal width')
+plt.legend(loc='upper left')
+plt.show()
+
+# Decision Tree
+from sklearn.tree import DecisionTreeClassifier
+tree = DecisionTreeClassifier(criterion="entropy", max_depth=3, random_state=0)
+tree.fit(X_train, y_train)
+X_combined = np.vstack((X_train, X_test))
+y_combined = np.hstack((y_train, y_test))
+plot_decision_regions_two(X_combined, y_combined, classifier=tree, test_idx=range(105,150))
+plt.xlabel('petal length')
+plt.ylabel('petal width')
+plt.legend(loc='upper left')
+plt.show()
+
+
+# Random Forest Classifier
+from sklearn.ensemble import RandomForestClassifier
+forest = RandomForestClassifier(criterion="entropy", n_estimators=10, random_state=1, n_jobs=2)
+forest.fit(X_train, y_train)
+plot_decision_regions_two(X_combined, y_combined, classifier=forest, test_idx=range(105,150))
+plt.xlabel('petal length')
+plt.ylabel('petal width')
+plt.legend(loc='upper left')
+plt.show()
+
+# KNN Classifier
+from sklearn.neighbors import KNeighborsClassifier
+knn = KNeighborsClassifier(n_neighbors=5, p=2, metric='minkowski')
+knn.fit(X_train_std, y_train)
+plot_decision_regions_two(X_combined_std, y_combined, classifier=knn, test_idx=range(105,150))
 plt.xlabel('petal length')
 plt.ylabel('petal width')
 plt.legend(loc='upper left')
