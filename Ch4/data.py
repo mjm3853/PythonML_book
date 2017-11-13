@@ -1,6 +1,13 @@
+# pylint: disable=C0103
+
+"""Data Processing Examples from Chapter 4"""
+from io import StringIO
 import pandas as pd
 import numpy as np
-from io import StringIO
+from sklearn.preprocessing import Imputer
+from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.model_selection import train_test_split
 
 print("----------------------------------------")
 print('Loaded Data')
@@ -15,7 +22,6 @@ print(df)
 print("----------------------------------------")
 print('Imputer')
 print("----------------------------------------")
-from sklearn.preprocessing import Imputer
 imr = Imputer(missing_values="NaN", strategy="mean", axis=0)
 imr = imr.fit(df)
 imputed_data = imr.transform(df.values)
@@ -81,7 +87,6 @@ print(dx)
 print("----------------------------------------")
 print('Class Encoder')
 print("----------------------------------------")
-from sklearn.preprocessing import LabelEncoder
 class_le = LabelEncoder()
 y = class_le.fit_transform(dx['classlabel'].values)
 print(y)
@@ -103,7 +108,6 @@ print(X)
 print("----------------------------------------")
 print('One Hot Encoding')
 print("----------------------------------------")
-from sklearn.preprocessing import OneHotEncoder
 ohe = OneHotEncoder(categorical_features=[0])
 print(ohe.fit_transform(X).toarray())
 
@@ -117,7 +121,20 @@ print('Load Wine Dataset')
 print("----------------------------------------")
 df_wine = pd.read_csv(
     'https://archive.ics.uci.edu/ml/machine-learning-databases/wine/wine.data', header=None)
-df_wine.columns = ['Class label', 'Alcohol', 'Malic acid', 'Ash', 'Alcalinity of ash', 'Magnesium', 'Total phenols', 'Flavanoids', 'Nonflavanoid phenols', 'Proanthocyanins', 'Color intensity', 'Hue', 'OD280/OD315 of diluted wines', 'Proline']
+df_wine.columns = ['Class label',
+                   'Alcohol',
+                   'Malic acid',
+                   'Ash',
+                   'Alcalinity of ash',
+                   'Magnesium',
+                   'Total phenols',
+                   'Flavanoids',
+                   'Nonflavanoid phenols',
+                   'Proanthocyanins',
+                   'Color intensity',
+                   'Hue',
+                   'OD280/OD315 of diluted wines',
+                   'Proline']
 print('Class labels', np.unique(df_wine['Class label']))
 print("----------------------------------------")
 print(df_wine.head())
@@ -125,7 +142,7 @@ print(df_wine.head())
 print("----------------------------------------")
 print('Partition Wine Dataset')
 print("----------------------------------------")
-from sklearn.model_selection import train_test_split
-X, y = df_wine.iloc[:, 1:].values, df_wine.iloc[:,0].values
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0)
+X, y = df_wine.iloc[:, 1:].values, df_wine.iloc[:, 0].values
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.3, random_state=0)
 print('Partition completed')
