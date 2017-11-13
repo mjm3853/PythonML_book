@@ -4,12 +4,14 @@
 from io import StringIO
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 from sklearn.preprocessing import Imputer
 from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
 
 print("----------------------------------------")
 print('Loaded Data')
@@ -173,3 +175,51 @@ print("Training Data Standardized--------------")
 print(X_train_std[:3])
 print("Test Data Standardized------------------")
 print(X_test_std[:3])
+
+print("----------------------------------------")
+print('L1 Regularization')
+print("----------------------------------------")
+lr = LogisticRegression(penalty='l1', C=0.1)
+lr.fit(X_train_std, y_train)
+print('Training accuracy:', lr.score(X_train_std, y_train))
+print('Test accuracy', lr.score(X_test_std, y_test))
+print('Intercept', lr.intercept_)
+print('Coefficients', lr.coef_)
+
+print("----------------------------------------")
+print('Plot Regularization Path')
+print("----------------------------------------")
+fig = plt.figure()
+ax = plt.subplot(111)
+colors = ['blue',
+          'green',
+          'red',
+          'cyan',
+          'magenta',
+          'yellow',
+          'black',
+          'pink',
+          'lightgreen',
+          'lightblue',
+          'gray',
+          'indigo',
+          'orange']
+weights, params = [], []
+for c in np.arange(-4, 6, dtype=float):
+    lr = LogisticRegression(penalty='l1', C=10**c, random_state=0)
+    lr.fit(X_train_std, y_train)
+    weights.append(lr.coef_[1])
+    params.append(10**c)
+weights = np.array(weights)
+for column, color in zip(range(weights.shape[1]), colors):
+    plt.plot(params, weights[:, column],
+             label=df_wine.columns[column + 1], color=color)
+plt.axhline(0, color='black', linestyle='--', linewidth=3)
+plt.xlim([10**(-5), 10**5])
+plt.ylabel('weight coefficient')
+plt.xlabel('C')
+plt.xscale('log')
+plt.legend(loc='upper left')
+ax.legend(loc='upper center', bbox_to_anchor=(
+    1.32, 1.03), ncol=1, fancybox=True)
+plt.show()
