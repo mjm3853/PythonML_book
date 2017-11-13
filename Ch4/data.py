@@ -8,6 +8,8 @@ from sklearn.preprocessing import Imputer
 from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import StandardScaler
 
 print("----------------------------------------")
 print('Loaded Data')
@@ -140,9 +142,34 @@ print("----------------------------------------")
 print(df_wine.head())
 
 print("----------------------------------------")
-print('Partition Wine Dataset')
+print('Partitioned Wine Dataset')
 print("----------------------------------------")
 X, y = df_wine.iloc[:, 1:].values, df_wine.iloc[:, 0].values
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.3, random_state=0)
-print('Partition completed')
+print("Training Data---------------------------")
+print(X_train[:3])
+print("Test Data-------------------------------")
+print(X_test[:3])
+
+print("----------------------------------------")
+print('MinMaxScaler')
+print("----------------------------------------")
+mms = MinMaxScaler()
+X_train_norm = mms.fit_transform(X_train)
+X_test_norm = mms.transform(X_test)
+print("Training Data Normalized----------------")
+print(X_train_norm[:3])
+print("Test Data Normalized--------------------")
+print(X_test_norm[:3])
+
+print("----------------------------------------")
+print('StandardScaler')
+print("----------------------------------------")
+stdsc = StandardScaler()
+X_train_std = stdsc.fit_transform(X_train)
+X_test_std = stdsc.transform(X_test)
+print("Training Data Standardized--------------")
+print(X_train_std[:3])
+print("Test Data Standardized------------------")
+print(X_test_std[:3])
