@@ -12,6 +12,10 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sequential_backward_selection import SBS
+
 
 print("----------------------------------------")
 print('Loaded Data')
@@ -182,9 +186,9 @@ print("----------------------------------------")
 lr = LogisticRegression(penalty='l1', C=0.1)
 lr.fit(X_train_std, y_train)
 print('Training accuracy:', lr.score(X_train_std, y_train))
-print('Test accuracy', lr.score(X_test_std, y_test))
-print('Intercept', lr.intercept_)
-print('Coefficients', lr.coef_)
+print('Test accuracy:', lr.score(X_test_std, y_test))
+print('Intercept:', lr.intercept_)
+print('Coefficients:', lr.coef_)
 
 print("----------------------------------------")
 print('Plot Regularization Path')
@@ -222,4 +226,40 @@ plt.xscale('log')
 plt.legend(loc='upper left')
 ax.legend(loc='upper center', bbox_to_anchor=(
     1.32, 1.03), ncol=1, fancybox=True)
+plt.show()
+print('>>> Regularization Path Plotted')
+
+print("----------------------------------------")
+print('Run SBS')
+print("----------------------------------------")
+knn = KNeighborsClassifier(n_neighbors=2)
+sbs = SBS(knn, k_features=1)
+sbs.fit(X_train_std, y_train)
+k_feat = [len(k) for k in sbs.subsets_]
+plt.plot(k_feat, sbs.scores_, marker='o')
+plt.ylim([0.7, 1.1])
+plt.ylabel('Accuracy')
+plt.xlabel('Number of features')
+plt.grid()
+plt.show()
+print('>>> Sequential Backward Selection Run')
+print("----------------------------------------")
+k5 = list(sbs.subsets_[8])
+print('Important features:', df_wine.columns[1:][k5])
+
+print("----------------------------------------")
+print('Feature Importance with Random Forest')
+print("----------------------------------------")
+feat_labels = df_wine.columns[1:]
+forest = RandomForestClassifier(n_estimators=10000, random_state=0, n_jobs=-1)
+forest.fit(X_train, y_train)
+importances = forest.feature_importances_
+indices = np.argsort(importances)[::-1]
+for f in range(X_train.shape[1]):
+    print("%2d) %-*s %f" % (f + 1, 30, feat_labels[indices[f]], importances[[f]]))
+plt.title('Feature Importances')
+plt.bar(range(X_train.shape[1]),importances[indices], color='lightblue', align='center')
+plt.xticks(range(X_train.shape[1]), feat_labels[indices], rotation=90)
+plt.xlim([-1, X_train.shape[1]])
+plt.tight_layout()
 plt.show()
