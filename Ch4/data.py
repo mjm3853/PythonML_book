@@ -256,9 +256,11 @@ forest.fit(X_train, y_train)
 importances = forest.feature_importances_
 indices = np.argsort(importances)[::-1]
 for f in range(X_train.shape[1]):
-    print("%2d) %-*s %f" % (f + 1, 30, feat_labels[indices[f]], importances[[f]]))
+    print("%2d) %-*s %f" %
+          (f + 1, 30, feat_labels[indices[f]], importances[[f]]))
 plt.title('Feature Importances')
-plt.bar(range(X_train.shape[1]),importances[indices], color='lightblue', align='center')
+plt.bar(range(X_train.shape[1]), importances[indices],
+        color='lightblue', align='center')
 plt.xticks(range(X_train.shape[1]), feat_labels[indices], rotation=90)
 plt.xlim([-1, X_train.shape[1]])
 plt.tight_layout()
