@@ -1,8 +1,11 @@
+# pylint: disable=C0103
+
+"""Docstring"""
 from matplotlib.colors import ListedColormap
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 
-
+"""Docstring"""
 def plot_decision_regions_three(X, y, classifier, test_idx=None, resolution=0.02):
     # Setup marker generator and color map
     markers = ('s', 'x', 'o', '^', 'v')
