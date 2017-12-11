@@ -6,7 +6,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import Pipeline
-from sklearn.cross_validation import StratifiedKFold
+from sklearn.cross_validation import StratifiedKFold, cross_val_score
 
 
 df = pd.read_csv(
@@ -39,3 +39,9 @@ for k, (train, test) in enumerate(kfold):
     print('Fold: %s, Class dist.: %s, Acc: %.3f' %
           (k + 1, np.bincount(y_train[train]), score))
 print('CV Accuracy: %.3f +/- %.3f' % (np.mean(scores), np.std(scores)))
+
+scores = cross_val_score(estimator=pipe_lr, X=X_train,
+                         y=y_train, cv=10, n_jobs=-1)
+print('CV accuracy scores: %s' % scores)
+print('CV Accuracy: %.3f +/- %.3f' % (np.mean(scores), np.std(scores)))
+
