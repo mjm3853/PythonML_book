@@ -2,6 +2,7 @@ import pyprind
 import pandas as pd
 import os
 import numpy as np
+import re
 
 pbar = pyprind.ProgBar(50000)
 labels = {'pos': 1, 'neg': 0}
@@ -19,3 +20,4 @@ df.columns = ['review', 'sentiment']
 np.random.seed(0)
 df = df.reindex(np.random.permutation(df.index))
 df.to_csv('./movie_data.csv', index=False)
+
