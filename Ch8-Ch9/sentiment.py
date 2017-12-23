@@ -11,6 +11,8 @@ from sklearn.grid_search import GridSearchCV
 from sklearn.pipeline import Pipeline
 from sklearn.linear_model import LogisticRegression, SGDClassifier
 from sklearn.feature_extraction.text import TfidfVectorizer, HashingVectorizer
+import pickle
+import os
 
 
 df = pd.read_csv('./movie_data.csv')
@@ -132,3 +134,9 @@ X_test = vect.transform(X_test)
 print('Accuracy: %.3f' % clf.score(X_test, y_test))
 
 clf = clf.partial_fit(X_test, y_test)
+
+dest = os.path.join('movieclassifier', 'pk1_objects')
+if not os.path.exists(dest):
+    os.makedirs(dest)
+pickle.dump(stop, open(os.path.join(dest, 'stopwords.pk1'), 'wb'), protocol=4)
+pickle.dump(clf, open(os.path.join(dest, 'classifier.pk1'), 'wb'), protocol=4)
