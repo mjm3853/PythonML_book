@@ -177,3 +177,18 @@ plt.xlabel('[LSTAT]')
 plt.ylabel('[MEDV]')
 plt.legend(loc='upper right')
 plt.show()
+
+X_log = np.log(X)
+y_sqrt = np.sqrt(y)
+
+X_fit = np.arange(X_log.min()-1, X_log.max()+1, 1)[:, np.newaxis]
+regr = regr.fit(X_log, y_sqrt)
+y_lin_fit = regr.predict(X_fit)
+linear_r2 = r2_score(y_sqrt, regr.predict(X_log))
+
+plt.scatter(X_log, y_sqrt, label='training points', color='lightgray')
+plt.plot(X_fit, y_lin_fit, label='linear (d=1), $R^2=%.2f$' % linear_r2, color='blue', lw=2, linestyle=':')
+plt.xlabel('[LSTAT]')
+plt.ylabel('[MEDV]')
+plt.legend(loc='upper right')
+plt.show()
