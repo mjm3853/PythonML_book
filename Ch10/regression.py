@@ -4,6 +4,7 @@ import seaborn as sns
 import numpy as np
 from LinearRegressionGD import LinearRegressionGD
 from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LinearRegression
 
 df = pd.read_csv('https://archive.ics.uci.edu/ml/machine-learning-databases/housing/housing.data',
                  header=None, sep='\s+')
@@ -36,4 +37,31 @@ plt.ylabel('SSE')
 plt.xlabel('Epoch')
 plt.tight_layout()
 # plt.savefig('./figures/cost.png', dpi=300)
+plt.show()
+
+def lin_regplot(X, y, model):
+    plt.scatter(X, y, c='blue')
+    plt.plot(X, model.predict(X), color='red')
+    return None
+
+lin_regplot(X_std, y_std, lr)
+plt.xlabel('Average number of rooms [RM] (standardized)')
+plt.ylabel('Price in $1000\'s [MEDV] (standardized)')
+plt.show()
+
+num_rooms_std = sc_x.transform(np.array([[5.0]]))
+price_std = lr.predict(num_rooms_std)
+print("Price in $1000\'s: %.3f" % sc_y.inverse_transform(price_std))
+
+print('Slope: %.3f' % lr.w_[1])
+print('Intercept: %.3f' % lr.w_[0])
+
+slr = LinearRegression()
+slr.fit(X, y)
+print('Slope: %.3f' % slr.coef_[0])
+print('Intercept: %.3f' % slr.intercept_)
+
+lin_regplot(X, y, slr)
+plt.xlabel('Average number of rooms [RM]')
+plt.ylabel('Price in $1000\'s [MEDV]')
 plt.show()
