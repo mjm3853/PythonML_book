@@ -4,8 +4,9 @@ import seaborn as sns
 import numpy as np
 from LinearRegressionGD import LinearRegressionGD
 from sklearn.preprocessing import StandardScaler
-from sklearn.linear_model import LinearRegression, RANSACRegressor
+from sklearn.linear_model import LinearRegression, RANSACRegressor, Ridge, Lasso, ElasticNet
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error, r2_score
 
 df = pd.read_csv('https://archive.ics.uci.edu/ml/machine-learning-databases/housing/housing.data',
                  header=None, sep='\s+')
@@ -106,3 +107,12 @@ plt.legend(loc='upper left')
 plt.hlines(y=0, xmin=-10, xmax=50, lw=2, color='red')
 plt.xlim([-10, 50])
 plt.show()
+
+print('MSE train: %.3f, test: %.3f' % (mean_squared_error(
+    y_train, y_train_pred), mean_squared_error(y_test, y_test_pred)))
+print('R^2 train: %.3f, test: %.3f' % (r2_score(
+    y_train, y_train_pred), r2_score(y_test, y_test_pred)))
+
+ridge = Ridge(alpha=1.0)
+lasso = Lasso(alpha=1.0)
+lasso = ElasticNet(alpha=1.0, l1_ratio=0.5)
