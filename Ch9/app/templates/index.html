@@ -2,18 +2,19 @@
 <html>
 
 <head>
-    <title>Flask App</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css')}}">
+    <title>Movie Classification</title>
 </head>
 
 <body>
     {% from "_formhelpers.html" import render_field %}
     <div>
-        What's your name?
+        Enter your movie review:
     </div>
-    <form action="/hello" method=post>
-        <dl>{{ render_field(form.sayHello) }}</dl>
-        <input type=submit value='Say Hello' name='submit_btn'>
+    <form action="/results" method=post>
+        <dl>{{ render_field(form.movieReview, cols='30', rows='10') }}</dl>
+        <div>
+            <input type=submit value='Submit Review' name='submit_btn'>
+        </div>
     </form>
 </body>
 
