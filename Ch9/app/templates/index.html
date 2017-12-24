@@ -1,0 +1,20 @@
+<!doctype HTML>
+<html>
+
+<head>
+    <title>Flask App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css')}}">
+</head>
+
+<body>
+    {% from "_formhelpers.html" import render_field %}
+    <div>
+        What's your name?
+    </div>
+    <form action="/hello" method=post>
+        <dl>{{ render_field(form.sayHello) }}</dl>
+        <input type=submit value='Say Hello' name='submit_btn'>
+    </form>
+</body>
+
+</html>
