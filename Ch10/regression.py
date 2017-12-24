@@ -3,7 +3,7 @@ import pandas as pd
 import seaborn as sns
 import numpy as np
 from LinearRegressionGD import LinearRegressionGD
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import StandardScaler, PolynomialFeatures
 from sklearn.linear_model import LinearRegression, RANSACRegressor, Ridge, Lasso, ElasticNet
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, r2_score
@@ -116,3 +116,33 @@ print('R^2 train: %.3f, test: %.3f' % (r2_score(
 ridge = Ridge(alpha=1.0)
 lasso = Lasso(alpha=1.0)
 lasso = ElasticNet(alpha=1.0, l1_ratio=0.5)
+lasso.fit(X_train, y_train)
+y_train_pred = lasso.predict(X_train)
+y_test_pred = lasso.predict(X_test)
+print(lasso.coef_)
+
+X = np.array([258.0, 270.0, 294.0, 
+              320.0, 342.0, 368.0, 
+              396.0, 446.0, 480.0, 586.0])[:, np.newaxis]
+
+y = np.array([236.4, 234.4, 252.8, 
+              298.6, 314.2, 342.2, 
+              360.8, 368.0, 391.2,
+              390.8])
+
+lr = LinearRegression()
+pr = LinearRegression()
+quadratic = PolynomialFeatures(degree=2)
+X_quad = quadratic.fit_transform(X)
+
+lr.fit(X, y)
+X_fit = np.arange(250,600,10) [:, np.newaxis]
+y_lin_fit = lr.predict(X_fit)
+
+pr.fit(X_quad, y)
+y_quad_fit = pr.predict(quadratic.fit_transform(X_fit))
+plt.scatter(X, y, label='training points')
+plt.plot(X_fit, y_lin_fit, label='Linear fit', linestyle='--')
+plt.plot(X_fit, y_quad_fit, label='Quadratic fit')
+plt.legend(loc='upper left')
+plt.show()
