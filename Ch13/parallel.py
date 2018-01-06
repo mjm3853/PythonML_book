@@ -81,16 +81,32 @@ def train_linreg(X_train, y_train, eta, epochs):
 
     # Compile Model
     train = theano.function(inputs=[eta0], outputs=cost, updates=update, givens={
-                            X: X_train, y: y_train,})
+                            X: X_train, y: y_train, })
 
     for _ in range(epochs):
         costs.append(train(eta))
 
     return costs, w
 
+
 costs, w = train_linreg(X_train, y_train, eta=0.001, epochs=10)
-plt.plot(range(1, len(costs)+1), costs)
+plt.plot(range(1, len(costs) + 1), costs)
 plt.tight_layout()
 plt.xlabel('Epoch')
 plt.ylabel('Cost')
+plt.show()
+
+
+def predict_linreg(X, w):
+    Xt = T.matrix(name='X')
+    net_input = T.dot(Xt, w[1:]) + w[0]
+    predict = theano.function(inputs=[Xt], givens={w: w}, outputs=net_input)
+    return predict(X)
+
+
+plt.scatter(X_train, y_train, marker='s', s=50)
+plt.plot(range(X_train.shape[0]), predict_linreg(
+    X_train, w), color='gray', marker='o', markersize=4, linewidth=3)
+plt.xlabel('x')
+plt.ylabel('y')
 plt.show()
