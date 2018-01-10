@@ -239,7 +239,17 @@ model.add(Dense(input_dim=X_train.shape[1], units=50, kernel_initializer='unifor
 model.add(Dense(input_dim=50, units=50, kernel_initializer='uniform', activation='tanh'))
 model.add(Dense(input_dim=50, units=y_train_ohe.shape[1], kernel_initializer='uniform', activation='softmax'))
 
-sgd = SGD(lr=0.001, decay=1e-7, momentum=.9)
+sgd = SGD(lr=0.001, decay=1e-5, momentum=.9)
 model.compile(loss='categorical_crossentropy', optimizer=sgd)
 
 model.fit(X_train, y_train_ohe, epochs=50, batch_size=300, verbose=1, validation_split=0.1)
+
+y_train_pred = model.predict_classes(X_train, verbose=0)
+
+train_acc = np.sum(y_train == y_train_pred, axis=0) / X_train.shape[0]
+print('Training accuracy: %.2f%%' % (train_acc * 100))
+
+y_test_pred = model.predict_classes(X_test, verbose=0)
+
+test_acc = np.sum(y_test == y_test_pred, axis=0) / X_test.shape[0]
+print('Testing accuracy: %.2f%%' % (test_acc * 100))
