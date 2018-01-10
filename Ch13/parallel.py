@@ -1,8 +1,13 @@
+import os
+import struct
 import theano
 from theano import tensor as T
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.special import expit
+from keras.utils import np_utils
 
+'''
 x1 = T.scalar()
 w1 = T.scalar()
 w0 = T.scalar()
@@ -110,3 +115,131 @@ plt.plot(range(X_train.shape[0]), predict_linreg(
 plt.xlabel('x')
 plt.ylabel('y')
 plt.show()
+
+X = np.array([[1, 1.4, 1.5]])
+w = np.array([0.0, 0.2, 0.4])
+
+
+def net_input(X, w):
+    z = X.dot(w)
+    return z
+
+
+def logistic(z):
+    return 1.0 / (1.0 + np.exp(-z))
+
+
+def logistic_activation(X, w):
+    z = net_input(X, w)
+    return logistic(z)
+
+
+print('P(y=1|x) = %.3f' % logistic_activation(X, w)[0])
+
+W = np.array([[1.1, 1.2, 1.3, 0.5],
+              [0.1, 0.2, 0.4, 0.1],
+              [0.2, 0.5, 2.1, 1.9]])
+
+A = np.array([[1.0],
+              [0.1],
+              [0.3],
+              [0.7]])
+
+Z = W.dot(A)
+y_probas = logistic(Z)
+print('Probabilities:\n', y_probas)
+
+y_class = np.argmax(Z, axis=0)
+print('predicted class label: %d' % y_class[0])
+
+
+def softmax(z):
+    return np.exp(z) / np.sum(np.exp(z))
+
+
+def softmax_activation(X, w):
+    z = net_input(X, w)
+    return softmax(z)
+
+
+y_probas = softmax(Z)
+print('Probabilities:\n', y_probas)
+
+y_class = np.argmax(Z, axis=0)
+print('predicted class label: %d' % y_class[0])
+
+
+def tanh(z):
+    e_p = np.exp(z)
+    e_m = np.exp(-z)
+    return (e_p - e_m) / (e_p + e_m)
+
+
+z = np.arange(-5, 5, 0.005)
+log_act = logistic(z)
+tanh_act = tanh(z)
+
+plt.ylim([-1.5, 1.5])
+plt.xlabel('net input $z$')
+plt.ylabel('activation %\phi(z)$')
+plt.axhline(1, color='black', linestyle='--')
+plt.axhline(0.5, color='black', linestyle='--')
+plt.axhline(0, color='black', linestyle='--')
+plt.axhline(-1, color='black', linestyle='--')
+
+plt.plot(z, tanh_act, linewidth=2, color='black', label='tanh')
+plt.plot(z, log_act, linewidth=2, color='lightgreen', label='logistic')
+
+plt.legend(loc='lower right')
+plt.tight_layout()
+plt.show()
+
+tanh_act = np.tanh(z)
+log_act = expit(z)
+
+'''
+
+
+def load_mnist(path, kind='train'):
+    """Load MNIST data from path"""
+    labels_path = os.path.join(path, '%s-labels-idx1-ubyte' % kind)
+    images_path = os.path.join(path, '%s-images-idx3-ubyte' % kind)
+
+    with open(labels_path, 'rb') as lbpath:
+        magic, n = struct.unpack('>II', lbpath.read(8))
+        labels = np.fromfile(lbpath, dtype=np.uint8)
+
+    with open(images_path, 'rb') as imgpath:
+        magic, num, rows, cols = struct.unpack(">IIII", imgpath.read(16))
+        images = np.fromfile(imgpath, dtype=np.uint8).reshape(len(labels), 784)
+
+    return images, labels
+
+
+X_train, y_train = load_mnist('mnist', kind='train')
+print('Rows: %d, columns: %d' % (X_train.shape[0], X_train.shape[1]))
+
+X_test, y_test = load_mnist('mnist', kind='t10k')
+print('Rows: %d, columns: %d' % (X_test.shape[0], X_test.shape[1]))
+
+X_train = X_train.astype(theano.config.floatX)
+X_test = X_test.astype(theano.config.floatX)
+
+y_train_ohe = np_utils.to_categorical(y_train)
+
+from keras.models import Sequential
+from keras.layers.core import Dense
+from keras.optimizers import SGD
+
+np.random.seed(1)
+
+model=Sequential()
+
+model.add(Dense(input_dim=X_train.shape[1], units=50, kernel_initializer='uniform', activation='tanh'))
+model.add(Dense(input_dim=50, units=50, kernel_initializer='uniform', activation='tanh'))
+model.add(Dense(input_dim=50, units=y_train_ohe.shape[1], kernel_initializer='uniform', activation='softmax'))
+
+sgd = SGD(lr=0.001, decay=1e-7, momentum=.9)
+model.compile(loss='categorical_crossentropy', optimizer=sgd)
+
+model.fit(X_train, y_train_ohe, epochs=50, batch_size=300, verbose=1, validation_split=0.1)
